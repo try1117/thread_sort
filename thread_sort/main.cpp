@@ -8,9 +8,8 @@
 
 using namespace std;
 
-const int TESTS_CNT = 50;
-const int START = 1000;
-const int STEP = 100;
+const int TESTS_CNT = 10;
+const int TESTS_SIZE = 1e5;
 const int RANGE = 1e6;
 
 vector<int> generate_test(int size, int range)
@@ -22,23 +21,27 @@ vector<int> generate_test(int size, int range)
 }
 
 vector<long long> times_mul;
+vector<vector<int>> tests;
 
 int main()
 {
+	for (int i = 0; i < TESTS_CNT; ++i)
+		tests.push_back(generate_test(TESTS_SIZE, RANGE));
+
 	long long time_std, time_one;
 	time_std = time_one = 0;
 
-	for (int threads = 1; threads < (1 << 5); threads <<= 1)
+	for (int threads = 1; threads < (1 << 10); threads <<= 1)
 	{
 		time_std = time_one = 0;
 		times_mul.push_back(0);
 
 		for (int i = 0; i < TESTS_CNT; ++i)
 		{
-			vector<int> cur_test = generate_test(START + i * STEP, RANGE);
-			vector<int> a(cur_test), b(cur_test), c(cur_test);
+			vector<int> &cur = tests[i];
+			vector<int> a(cur), b(cur), c(cur);
 			clock_t t0 = clock();
-
+			
 			sort(a.begin(), a.end());
 			clock_t t1 = clock();
 
